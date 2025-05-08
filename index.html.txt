@@ -1,0 +1,71 @@
+<!DOCTYPE html>
+<html lang="ar">
+<head>
+  <meta charset="UTF-8">
+  <title>مشاركة موقعي</title>
+  <style>
+    body {
+      margin: 0;
+      padding: 0;
+      background: url('https://i.ibb.co/kcmV4xB/map-gps-background.jpg') no-repeat center center fixed;
+      background-size: cover;
+      display: flex;
+      justify-content: center;
+      align-items: center;
+      height: 100vh;
+      font-family: Arial, sans-serif;
+    }
+    button {
+      padding: 20px 40px;
+      font-size: 28px;
+      font-weight: bold;
+      border: none;
+      border-radius: 12px;
+      background-color: rgba(255, 255, 255, 0.9);
+      color: #333;
+      cursor: pointer;
+      box-shadow: 0px 4px 10px rgba(0, 0, 0, 0.3);
+    }
+  </style>
+</head>
+<body>
+  <button onclick="startTracking()">START</button>
+
+  <script>
+    let watchId = null;
+    const phone = "9647777077413";
+
+    function startTracking() {
+      if (navigator.geolocation) {
+        watchId = navigator.geolocation.watchPosition(function(position) {
+          const latitude = position.coords.latitude;
+          const longitude = position.coords.longitude;
+          const locationUrl = `https://maps.google.com/?q=${latitude},${longitude}`;
+
+          if (!window.sent) {
+            window.sent = true;
+            const whatsappUrl = `https://wa.me/${phone}?text=موقعي%20الآن%20هو%3A%20${encodeURIComponent(locationUrl)}`;
+            window.open(whatsappUrl, '_blank');
+          }
+
+        }, function(error) {
+          alert("تعذر الحصول على الموقع. تأكد من السماح بالوصول إلى الموقع.");
+        }, {
+          enableHighAccuracy: true,
+          maximumAge: 0,
+          timeout: 10000
+        });
+
+        window.addEventListener("beforeunload", function () {
+          if (watchId !== null) {
+            navigator.geolocation.clearWatch(watchId);
+          }
+        });
+
+      } else {
+        alert("المتصفح لا يدعم تحديد الموقع.");
+      }
+    }
+  </script>
+</body>
+</html>
